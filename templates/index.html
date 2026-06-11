@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmbisBuddy - Sahabat Persiapan SNBT & TKA Kelas 12</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            purple: {
+                                50: '#faf8ff',
+                                100: '#f4f0ff',
+                                200: '#e9e0ff',
+                                300: '#d7c4ff',
+                                400: '#be9eff',
+                                500: '#a371ff',
+                                600: '#8b43ff',
+                                700: '#6d28d9',
+                            },
+                            indigo: {
+                                50: '#f5f7ff',
+                                100: '#ebf0ff',
+                                200: '#d9e2ff',
+                                500: '#6c8eff',
+                                600: '#4f46e5',
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #faf9ff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Glassmorphism card styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid #f4f0ff;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col pb-20 md:pb-0">
+
+    <!-- ONBOARDING OVERLAY MODAL -->
+    <div id="onboarding-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-purple-700/40 backdrop-blur-md p-4 hidden">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-6 md:p-8 shadow-2xl border border-brand-purple-100 flex flex-col max-h-[90vh] overflow-y-auto">
+            <div class="text-center space-y-2 mb-6">
+                <span class="text-4xl">🚀</span>
+                <h2 class="text-2xl font-extrabold text-slate-800">Selamat Datang di AmbisBuddy!</h2>
+                <p class="text-sm text-slate-500 font-medium">Bantu kami menyesuaikan aplikasi ini dengan target persiapan masuk kampus impianmu.</p>
+            </div>
+            
+            <form id="onboarding-form" onsubmit="submitOnboarding(event)" class="space-y-4 flex-1">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Panggilan Kamu</label>
+                        <input type="text" id="onboard-nickname" required placeholder="Contoh: Budi, Sasa" 
+                            class="w-full bg-slate-50 px-4 py-2.5 rounded-xl border border-brand-purple-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-sm font-semibold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Kampus Target</label>
+                        <input type="text" id="onboard-campus" required placeholder="Contoh: Universitas Indonesia" 
+                            class="w-full bg-slate-50 px-4 py-2.5 rounded-xl border border-brand-purple-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-sm font-semibold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Jurusan Target</label>
+                        <input type="text" id="onboard-major" required placeholder="Contoh: Kedokteran" 
+                            class="w-full bg-slate-50 px-4 py-2.5 rounded-xl border border-brand-purple-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-sm font-semibold text-slate-700">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Fokus Ujian Akhir Kelas 12</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="flex flex-col items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-brand-purple-300 transition-all font-semibold text-xs">
+                            <input type="radio" name="onboard-focus" value="SNBT" checked class="mb-1 accent-brand-purple-500">
+                            SNBT Only
+                        </label>
+                        <label class="flex flex-col items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-brand-purple-300 transition-all font-semibold text-xs">
+                            <input type="radio" name="onboard-focus" value="TKA" class="mb-1 accent-brand-purple-500">
+                            TKA Only
+                        </label>
+                        <label class="flex flex-col items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-brand-purple-300 transition-all font-semibold text-xs">
+                            <input type="radio" name="onboard-focus" value="Both" class="mb-1 accent-brand-purple-500">
+                            Keduanya
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mata Pelajaran Paling Lemah</label>
+                        <input type="text" id="onboard-weak" required placeholder="Contoh: Penalaran Matematika" 
+                            class="w-full bg-slate-50 px-4 py-2.5 rounded-xl border border-brand-purple-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-sm font-semibold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mata Pelajaran Paling Kuat</label>
+                        <input type="text" id="onboard-strong" required placeholder="Contoh: Literasi B. Inggris" 
+                            class="w-full bg-slate-50 px-4 py-2.5 rounded-xl border border-brand-purple-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-sm font-semibold text-slate-700">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Target Jam Belajar Mandiri Per Hari</label>
+                    <div class="flex items-center space-x-3">
+                        <input type="range" id="onboard-hours" min="1" max="10" step="0.5" value="3" oninput="document.getElementById('hours-value').innerText = this.value + ' Jam'" 
+                            class="w-full accent-brand-purple-500">
+                        <span id="hours-value" class="text-sm font-extrabold text-brand-purple-600 bg-brand-purple-50 border border-brand-purple-100 px-3 py-1 rounded-xl whitespace-nowrap">3 Jam</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-brand-purple-500 hover:bg-brand-purple-600 text-white font-bold py-3.5 rounded-2xl transition shadow-lg shadow-brand-purple-200 text-sm flex items-center justify-center space-x-2">
+                    <span>Mulai Petualangan Belajar</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN BODY LAYOUT (Desktop Side Navigation, Mobile Bottom Navigation) -->
+    <div class="flex-1 flex flex-col md:flex-row h-full">
+        
+        <!-- SIDE NAVIGATION BAR (Desktop) -->
+        <aside class="hidden md:flex flex-col w-64 bg-white border-r border-brand-purple-200 p-5 space-y-6">
+            <div class="flex items-center space-x-3 px-2">
+                <div class="bg-gradient-to-tr from-brand-purple-500 to-brand-indigo-500 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-brand-purple-200">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-brand-purple-600 to-brand-indigo-500 bg-clip-text text-transparent">AmbisBuddy</h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">SNBT & TKA Companion</p>
+                </div>
+            </div>
+
+            <!-- Profile Info Widget -->
+            <div class="bg-brand-purple-50/60 p-4 rounded-2xl border border-brand-purple-100/50 space-y-1.5">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pejuang Kampus</div>
+                <div class="font-extrabold text-slate-800 text-sm leading-tight" id="profile-widget-name">-</div>
+                <div class="text-[11px] font-semibold text-brand-purple-600 leading-tight">
+                    <i class="fa-solid fa-university text-[10px] mr-1"></i>
+                    <span id="profile-widget-campus">-</span>
+                </div>
+            </div>
+
+            <!-- Menu List -->
+            <nav class="flex-1 space-y-1">
+                <button onclick="switchTab('dashboard')" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition font-bold text-sm" data-tab="dashboard">
+                    <i class="fa-solid fa-compass text-base w-5 text-center"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('materials')" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition font-bold text-sm" data-tab="materials">
+                    <i class="fa-solid fa-list-check text-base w-5 text-center"></i>
+                    <span>Kurikulum Materi</span>
+                </button>
+                <button onclick="switchTab('timer')" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition font-bold text-sm" data-tab="timer">
+                    <i class="fa-solid fa-stopwatch text-base w-5 text-center"></i>
+                    <span>Study Timer</span>
+                </button>
+                <button onclick="switchTab('journal')" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition font-bold text-sm" data-tab="journal">
+                    <i class="fa-solid fa-heart-pulse text-base w-5 text-center"></i>
+                    <span>Jurnal & Mood</span>
+                </button>
+                <button onclick="switchTab('stats')" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition font-bold text-sm" data-tab="stats">
+                    <i class="fa-solid fa-chart-line text-base w-5 text-center"></i>
+                    <span>Statistik Belajar</span>
+                </button>
+                <button onclick="switchTab('forest')" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition font-bold text-sm" data-tab="forest">
+                    <i class="fa-solid fa-tree text-base w-5 text-center"></i>
+                    <span>Ambis Forest</span>
+                </button>
+            </nav>
+
+            <button onclick="resetProfileOnboard()" class="text-xs text-slate-400 hover:text-rose-500 flex items-center space-x-1 justify-center pt-2 transition font-bold">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                <span>Reset Onboarding</span>
+            </button>
+        </aside>
+
+        <!-- MOBILE BOTTOM NAVIGATION BAR -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-brand-purple-200 px-4 py-2 flex justify-between items-center shadow-lg">
+            <button onclick="switchTab('dashboard')" class="menu-btn flex flex-col items-center justify-center p-2 text-slate-400" data-tab="dashboard">
+                <i class="fa-solid fa-compass text-lg"></i>
+                <span class="text-[9px] font-bold mt-0.5">Dashboard</span>
+            </button>
+            <button onclick="switchTab('materials')" class="menu-btn flex flex-col items-center justify-center p-2 text-slate-400" data-tab="materials">
+                <i class="fa-solid fa-list-check text-lg"></i>
+                <span class="text-[9px] font-bold mt-0.5">Materi</span>
+            </button>
+            <button onclick="switchTab('timer')" class="menu-btn flex flex-col items-center justify-center p-2 text-slate-400" data-tab="timer">
+                <i class="fa-solid fa-stopwatch text-lg"></i>
+                <span class="text-[9px] font-bold mt-0.5">Timer</span>
+            </button>
+            <button onclick="switchTab('journal')" class="menu-btn flex flex-col items-center justify-center p-2 text-slate-400" data-tab="journal">
+                <i class="fa-solid fa-heart-pulse text-lg"></i>
+                <span class="text-[9px] font-bold mt-0.5">Jurnal</span>
+            </button>
+            <button onclick="switchTab('stats')" class="menu-btn flex flex-col items-center justify-center p-2 text-slate-400" data-tab="stats">
+                <i class="fa-solid fa-chart-line text-lg"></i>
+                <span class="text-[9px] font-bold mt-0.5">Stats</span>
+            </button>
+            <button onclick="switchTab('forest')" class="menu-btn flex flex-col items-center justify-center p-2 text-slate-400" data-tab="forest">
+                <i class="fa-solid fa-tree text-lg"></i>
+                <span class="text-[9px] font-bold mt-0.5">Forest</span>
+            </button>
+        </nav>
+
+        <!-- DASHBOARD BODY WRAPPER -->
+        <div class="flex-1 flex flex-col min-h-screen overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
+            
+            <!-- TOP BAR (COUNTDOWNS & DATE) -->
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-800">Study Space</h2>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="today-date-el">-</p>
+                </div>
+                <!-- Countdowns container -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="bg-brand-purple-50 text-brand-purple-600 px-4 py-2 rounded-2xl border border-brand-purple-100 flex items-center space-x-2 text-xs font-extrabold">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                        <span>SNBT:</span>
+                        <span id="snbt-countdown-el" class="text-brand-purple-700">0 Hari</span>
+                    </div>
+                    <div class="bg-brand-indigo-50 text-brand-indigo-500 px-4 py-2 rounded-2xl border border-brand-indigo-100 flex items-center space-x-2 text-xs font-extrabold">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                        <span>TKA:</span>
+                        <span id="tka-countdown-el" class="text-brand-indigo-600">0 Hari</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ==================== TAB: DASHBOARD ==================== -->
+            <div id="tab-dashboard" class="tab-content active space-y-6">
+                <!-- Welcome & Quotes Section -->
+                <div class="bg-gradient-to-r from-brand-purple-100 via-brand-indigo-100 to-brand-purple-50 p-6 rounded-3xl border border-brand-purple-200 relative overflow-hidden shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="space-y-1 z-10">
+                        <h3 class="text-2xl font-extrabold text-slate-800">Halo, Pejuang Kampus! 🌟</h3>
+                        <p class="text-sm text-slate-600 font-medium max-w-lg">Konsistensi belajar harian adalah kunci kelulusanmu. Ambil secangkir air, mari mulai belajar!</p>
+                    </div>
+                    <!-- Quotes Block -->
+                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-2xl border border-brand-purple-200/80 shadow-sm max-w-sm w-full z-10 flex flex-col justify-between min-h-[90px]">
+                        <p class="text-xs italic text-slate-600 font-medium leading-relaxed" id="quote-text">Loading quote...</p>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-[9px] font-bold text-brand-purple-500 uppercase tracking-wider" id="quote-author">-</span>
+                            <button onclick="cycleQuote()" class="text-slate-400 hover:text-brand-purple-600 text-xs transition">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Left / Center 2 Columns -->
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- REFLECTION AI CARD -->
+                        <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="bg-purple-100 text-purple-600 p-2.5 rounded-xl">
+                                        <i class="fa-solid fa-robot"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-extrabold text-base text-slate-800">Reflection AI Insight</h4>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Evaluasi & Pola Belajarmu</p>
+                                    </div>
+                                </div>
+                                <button onclick="fetchReflectionAI()" class="text-xs text-brand-purple-600 hover:text-brand-purple-800 font-bold transition flex items-center space-x-1">
+                                    <i class="fa-solid fa-rotate"></i>
+                                    <span>Refresh</span>
+                                </button>
+                            </div>
+                            <div class="bg-brand-purple-50/50 p-5 rounded-2xl border border-brand-purple-100/60 text-sm text-slate-600 leading-relaxed font-medium whitespace-pre-wrap" id="ai-reflection-box">
+                                Menganalisis aktivitas belajarmu hari ini...
+                            </div>
+                        </section>
+
+                        <!-- PROGRESS OVERVIEW -->
+                        <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- SNBT card progress -->
+                            <div class="bg-white rounded-3xl p-5 border border-brand-purple-100 shadow-sm space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Progress Materi SNBT</span>
+                                    <span class="text-xs font-extrabold text-brand-purple-600 bg-brand-purple-50 px-2 py-0.5 rounded-md border border-brand-purple-100" id="snbt-percent-widget">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="bg-brand-purple-500 h-full transition-all duration-500" id="snbt-bar-widget" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- TKA card progress -->
+                            <div class="bg-white rounded-3xl p-5 border border-brand-purple-100 shadow-sm space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Progress Materi TKA</span>
+                                    <span class="text-xs font-extrabold text-brand-indigo-500 bg-brand-indigo-50 px-2 py-0.5 rounded-md border border-brand-indigo-100" id="tka-percent-widget">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="bg-brand-indigo-500 h-full transition-all duration-500" id="tka-bar-widget" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- DAILY TARGETS WIDGET -->
+                        <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="bg-brand-purple-100 text-brand-purple-600 p-2.5 rounded-xl">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-extrabold text-base text-slate-800">Target Belajar Harian</h4>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Selesaikan hari ini untuk menjaga streak</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-slate-400" id="target-stat-widget">0/0 selesai</span>
+                            </div>
+                            
+                            <!-- Add target small form -->
+                            <form onsubmit="handleQuickTarget(event)" class="flex gap-2">
+                                <input type="text" id="quick-target-title" required placeholder="Tambah target harian baru..." 
+                                    class="flex-1 bg-slate-50 px-4 py-2 rounded-xl border border-brand-purple-100 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-sm font-semibold text-slate-700">
+                                <button type="submit" class="bg-brand-purple-500 hover:bg-brand-purple-600 text-white font-bold px-4 py-2 rounded-xl transition shadow-md shadow-brand-purple-200 text-xs">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </form>
+
+                            <div id="quick-targets-container" class="space-y-2">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Column (Streaks & Forest Preview) -->
+                    <div class="space-y-6">
+                        
+                        <!-- STREAK PLANT STAGE CARD -->
+                        <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4 text-center">
+                            <div class="text-left">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Belajar Konsisten</span>
+                                <h4 class="font-extrabold text-base text-slate-800">Study Streak & Plant Growth</h4>
+                            </div>
+
+                            <div class="bg-brand-purple-50 p-6 rounded-2xl border border-brand-purple-100 flex flex-col items-center space-y-3 relative overflow-hidden">
+                                <span class="text-6xl animate-bounce" id="streak-plant-emoji">🌱</span>
+                                <div>
+                                    <div class="text-2xl font-extrabold text-brand-purple-600" id="streak-days-widget">0 Hari</div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" id="streak-stage-widget">Tahap Tunas</div>
+                                </div>
+                            </div>
+
+                            <div class="text-xs font-bold text-slate-500 text-left border-t border-slate-100 pt-3 flex justify-between items-center">
+                                <span>Rekor Terpanjang:</span>
+                                <span class="text-slate-800" id="streak-longest-widget">0 Hari</span>
+                            </div>
+                        </section>
+
+                        <!-- AMBIS FOREST PREVIEW -->
+                        <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <div class="bg-emerald-100 text-emerald-600 p-2.5 rounded-xl">
+                                        <i class="fa-solid fa-tree"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-extrabold text-base text-slate-800">Hutan Belajarmu</h4>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pohon streak terukir permanen</p>
+                                    </div>
+                                </div>
+                                <button onclick="switchTab('forest')" class="text-xs text-brand-purple-500 hover:text-brand-purple-700 font-bold transition">Buka</button>
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-3 py-2 justify-items-center" id="forest-preview-grid">
+                                <!-- Planted Trees emojis -->
+                            </div>
+                        </section>
+
+                        <!-- QUICK POMODORO REDIRECT -->
+                        <div class="bg-gradient-to-tr from-brand-indigo-600 to-brand-purple-500 text-white rounded-3xl p-5 shadow-lg shadow-brand-indigo-100 flex items-center justify-between">
+                            <div class="space-y-1">
+                                <h4 class="font-extrabold text-sm leading-tight">Mulai Sesi Belajar Fokus?</h4>
+                                <p class="text-[10px] text-brand-indigo-100 font-semibold">Gunakan Pomodoro study timer sekarang</p>
+                            </div>
+                            <button onclick="switchTab('timer')" class="bg-white text-brand-indigo-600 font-extrabold px-4 py-2 rounded-xl text-xs hover:scale-105 transition shadow-sm">
+                                Buka Timer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB: CURRICULUM MATERIALS ==================== -->
+            <div id="tab-materials" class="tab-content space-y-6">
+                <div class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <div class="bg-brand-purple-100 text-brand-purple-600 p-2.5 rounded-xl">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-lg text-slate-800">Kurikulum Silabus Belajar</h3>
+                                <p class="text-xs text-slate-400 font-semibold">Tandai penguasaan materi persiapamu untuk SNBT & TKA</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 border-b border-slate-100 text-sm font-semibold pb-1">
+                        <button onclick="filterCurriculum('SNBT')" id="curric-tab-SNBT" class="border-b-2 border-brand-purple-500 text-brand-purple-600 px-4 py-2 transition">SNBT (TPS & Literasi)</button>
+                        <button onclick="filterCurriculum('TKA')" id="curric-tab-TKA" class="border-b-2 border-transparent text-slate-400 hover:text-slate-600 px-4 py-2 transition">TKA (Akademik Saintek)</button>
+                    </div>
+
+                    <div id="curriculum-container" class="space-y-4">
+                        <!-- Loaded dynamically as accordion -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB: STUDY TIMER (POMODORO) ==================== -->
+            <div id="tab-timer" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Left: Timer Circle and Controls (2 Columns) -->
+                    <div class="lg:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-brand-purple-100 shadow-sm flex flex-col items-center justify-center space-y-6 min-h-[450px]">
+                        
+                        <!-- Selection dropdown for mapping session to subject -->
+                        <div class="w-full max-w-xs text-center space-y-1">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mata Pelajaran yang Dipelajari:</label>
+                            <select id="timer-subject-select" class="w-full bg-slate-50 px-4 py-2.5 rounded-xl border border-brand-purple-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-sm font-semibold text-slate-700">
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Timer Graphic Circle -->
+                        <div class="relative w-64 h-64 flex flex-col items-center justify-center rounded-full border-4 border-brand-purple-100 shadow-inner bg-brand-purple-50/30">
+                            <!-- SVG Progress Ring -->
+                            <svg class="absolute inset-0 w-full h-full -rotate-90">
+                                <circle cx="128" cy="128" r="120" stroke="#a371ff" stroke-width="6" fill="transparent" stroke-dasharray="754" stroke-dashoffset="0" id="timer-progress-ring"></circle>
+                            </svg>
+                            
+                            <div class="z-10 text-center">
+                                <div class="text-5xl font-black text-slate-800 tracking-tight" id="timer-display">25:00</div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1" id="timer-status-text font-bold">Fokus Belajar</div>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="flex items-center space-x-4">
+                            <button onclick="resetTimer()" class="w-12 h-12 rounded-2xl border border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-slate-700 flex items-center justify-center transition" title="Reset Timer">
+                                <i class="fa-solid fa-arrow-rotate-left"></i>
+                            </button>
+                            <button onclick="toggleTimer()" id="timer-play-btn" class="w-16 h-16 rounded-2xl bg-brand-purple-500 hover:bg-brand-purple-600 text-white flex items-center justify-center transition shadow-lg shadow-brand-purple-200 text-xl font-bold">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <!-- Volume toggle sound notification test -->
+                            <button onclick="soundTest()" class="w-12 h-12 rounded-2xl border border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-slate-700 flex items-center justify-center transition" title="Sound Test / Beep">
+                                <i class="fa-solid fa-bell"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Duration Presets & History -->
+                    <div class="space-y-6">
+                        <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                            <h4 class="font-extrabold text-base text-slate-800">Durasi Presets</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="setTimerPreset(25, 5, 'Belajar 25 Menit')" class="p-3 text-xs font-bold rounded-2xl border border-brand-purple-200 bg-brand-purple-50/50 hover:bg-brand-purple-50 text-brand-purple-600 transition">
+                                    ⏱️ 25m Belajar + 5m Break
+                                </button>
+                                <button onclick="setTimerPreset(30, 10, 'Belajar 30 Menit')" class="p-3 text-xs font-bold rounded-2xl border border-slate-200 hover:border-brand-purple-200 hover:bg-brand-purple-50/30 text-slate-600 hover:text-brand-purple-600 transition">
+                                    ⏱️ 30m Belajar + 10m Break
+                                </button>
+                            </div>
+                            
+                            <!-- Custom duration selection form -->
+                            <div class="space-y-2 pt-2 border-t border-slate-100">
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Durasi Kustom (Menit):</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="custom-minutes" min="1" max="180" value="45" 
+                                        class="w-20 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-purple-400 text-sm font-semibold text-center text-slate-700">
+                                    <button onclick="setCustomTimer()" class="flex-1 bg-brand-purple-100 hover:bg-brand-purple-200 text-brand-purple-600 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+                                        Atur Kustom
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-3">
+                            <h4 class="font-extrabold text-base text-slate-800">Sesi Terakhir Hari Ini</h4>
+                            <div id="session-history-container" class="space-y-2.5 max-h-[220px] overflow-y-auto pr-1 text-xs">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB: JOURNAL & MOOD ==================== -->
+            <div id="tab-journal" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Left: Form Input (2 Columns) -->
+                    <div class="lg:col-span-2 bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-5">
+                        <div class="flex items-center space-x-2">
+                            <div class="bg-rose-100 text-rose-500 p-2.5 rounded-xl">
+                                <i class="fa-solid fa-feather"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-lg text-slate-800">Tulis Jurnal Refleksi Harian</h3>
+                                <p class="text-xs text-slate-400 font-semibold">Bagikan perjuangan belajar dan evaluasi dirimu hari ini</p>
+                            </div>
+                        </div>
+
+                        <!-- Mood selector emoticons -->
+                        <div class="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 space-y-3">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Bagaimana perasaanmu secara keseluruhan hari ini?</label>
+                            <div class="grid grid-cols-5 gap-3 max-w-md" id="journal-mood-selector">
+                                <button type="button" onclick="selectJournalMood('Excited')" class="j-mood-btn flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-brand-purple-300 hover:scale-105 transition" data-mood="Excited">
+                                    <span class="text-3xl">🤩</span>
+                                    <span class="text-[10px] font-bold text-slate-500 mt-1">Excited</span>
+                                </button>
+                                <button type="button" onclick="selectJournalMood('Happy')" class="j-mood-btn flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-brand-purple-300 hover:scale-105 transition" data-mood="Happy">
+                                    <span class="text-3xl">😊</span>
+                                    <span class="text-[10px] font-bold text-slate-500 mt-1">Happy</span>
+                                </button>
+                                <button type="button" onclick="selectJournalMood('Focused')" class="j-mood-btn flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-brand-purple-300 hover:scale-105 transition" data-mood="Focused">
+                                    <span class="text-3xl">🎯</span>
+                                    <span class="text-[10px] font-bold text-slate-500 mt-1">Focus</span>
+                                </button>
+                                <button type="button" onclick="selectJournalMood('Tired')" class="j-mood-btn flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-brand-purple-300 hover:scale-105 transition" data-mood="Tired">
+                                    <span class="text-3xl">😴</span>
+                                    <span class="text-[10px] font-bold text-slate-500 mt-1">Tired</span>
+                                </button>
+                                <button type="button" onclick="selectJournalMood('Stressed')" class="j-mood-btn flex flex-col items-center p-3 rounded-2xl bg-white border border-slate-200 hover:border-brand-purple-300 hover:scale-105 transition" data-mood="Stressed">
+                                    <span class="text-3xl">🤯</span>
+                                    <span class="text-[10px] font-bold text-slate-500 mt-1">Stres</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 4 Structured Fields -->
+                        <form id="full-journal-form" onsubmit="submitFullJournal(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">1. Apa saja yang telah kamu pelajari hari ini?</label>
+                                    <textarea id="journal-learned" required rows="3" placeholder="Contoh: Belajar Limit Trigonometri dan berlatih 10 soal Penalaran Kuantitatif" 
+                                        class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-xs placeholder:text-slate-400 font-medium"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">2. Hambatan/Kesulitan apa yang kamu temui?</label>
+                                    <textarea id="journal-diff" required rows="3" placeholder="Contoh: Masih bingung membedakan rumus jumlah dan selisih sudut di Trigonometri" 
+                                        class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-xs placeholder:text-slate-400 font-medium"></textarea>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">3. Apa rencanamu untuk sesi belajar besok?</label>
+                                    <textarea id="journal-tomorrow" required rows="3" placeholder="Contoh: Menonton video pembahasan di YouTube mengenai kesulitan rumus tadi" 
+                                        class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-xs placeholder:text-slate-400 font-medium"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">4. Kisah hari ini (Tulis evaluasi/catatan bebas)</label>
+                                    <textarea id="journal-content" required rows="3" placeholder="Contoh: Hari ini belajar terasa agak berat, tapi bangga tetap bisa bertahan" 
+                                        class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-purple-400 text-xs placeholder:text-slate-400 font-medium"></textarea>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-brand-purple-500 hover:bg-brand-purple-600 text-white font-bold py-3.5 rounded-2xl transition shadow-lg shadow-brand-purple-200 text-sm flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-feather-pointed"></i>
+                                <span>Simpan Jurnal & Perbarui Streak</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Journal logs history list -->
+                    <div class="space-y-6">
+                        <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                            <h4 class="font-extrabold text-base text-slate-800">Riwayat Jurnal Refleksi</h4>
+                            <div id="full-journals-container" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB: STATS & ANALYTICS ==================== -->
+            <div id="tab-stats" class="tab-content space-y-6">
+                <!-- Overview Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-2xl p-5 border border-brand-purple-100 shadow-sm text-center">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Durasi Belajar</div>
+                        <div class="text-3xl font-extrabold text-brand-purple-600 mt-1" id="stats-total-hours">0 Jam</div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 border border-brand-purple-100 shadow-sm text-center">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mata Pelajaran Terlama</div>
+                        <div class="text-xl font-extrabold text-slate-700 mt-2 leading-tight" id="stats-most-studied">-</div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 border border-brand-purple-100 shadow-sm text-center">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fokus Minggu Ini</div>
+                        <div class="text-xl font-extrabold text-brand-indigo-500 mt-2 leading-tight">UTBK / SNBT</div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                        <h4 class="font-extrabold text-base text-slate-800">Aktivitas Jam Belajar (7 Hari Terakhir)</h4>
+                        <div class="h-64 flex justify-center items-center">
+                            <canvas id="chart-activity"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                        <h4 class="font-extrabold text-base text-slate-800">Penguasaan Submateri (%) per Mata Pelajaran</h4>
+                        <div class="h-64 flex justify-center items-center">
+                            <canvas id="chart-subjects"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4 lg:col-span-2">
+                        <h4 class="font-extrabold text-base text-slate-800">Distribusi Suasana Hati (Mood Tracker)</h4>
+                        <div class="h-64 flex justify-center items-center">
+                            <canvas id="chart-moods"></canvas>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ==================== TAB: AMBIS FOREST ==================== -->
+            <div id="tab-forest" class="tab-content space-y-6">
+                <div class="bg-white rounded-3xl p-6 border border-brand-purple-100 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="bg-emerald-100 text-emerald-600 p-2.5 rounded-xl">
+                                <i class="fa-solid fa-tree"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-lg text-slate-800">Ambis Forest (Hutan Konsistensimu)</h3>
+                                <p class="text-xs text-slate-400 font-semibold">Tiap rekor streak belajar kelas 12 yang berhasil diselesaikan akan diabadikan di sini</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Manual plant tree simulator for presentation -->
+                        <button onclick="openSimulationModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl transition text-xs flex items-center space-x-1 shadow-md shadow-emerald-100">
+                            <i class="fa-solid fa-seedling"></i>
+                            <span>Simulasi Tanam Pohon</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-4" id="forest-full-grid">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SIMULASI TANAM POHON MODAL -->
+    <div id="simulation-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 space-y-4">
+            <h3 class="font-extrabold text-lg text-slate-800">Simulasi Tanam Pohon Baru</h3>
+            <p class="text-xs text-slate-400 font-semibold">Uji coba visual Hutan Belajar Anda dengan membuat catatan pohon baru langsung.</p>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Nama Pohon</label>
+                    <input type="text" id="sim-tree-name" value="Pohon Fisika Kinematika" 
+                        class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Durasi Streak Belajar (Hari)</label>
+                    <input type="number" id="sim-tree-streak" value="31" min="1" 
+                        class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Mata Pelajaran Terbanyak</label>
+                    <input type="text" id="sim-tree-subject" value="Fisika Mekanika" 
+                        class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-sm font-semibold">
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeSimulationModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2 rounded-xl text-xs transition">
+                    Batal
+                </button>
+                <button onclick="submitPlantSimulation()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs transition">
+                    Tanam Pohon
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP JAVASCRIPT LOGIC -->
+    <script>
+        // Global variables for caching
+        let activeTab = 'dashboard';
+        let onboardingRequired = false;
+        let subjectsList = [];
+        let allMaterials = [];
+        let selectedJournalMood = 'Focused';
+
+        // Countdowns Target configuration dates
+        // UTBK-SNBT 2027 is roughly May 15, 2027
+        const SNBT_TARGET_DATE = new Date("May 15, 2027 08:00:00").getTime();
+        // TKA is roughly June 20, 2027
+        const TKA_TARGET_DATE = new Date("June 20, 2027 08:00:00").getTime();
+
+        // ------------------ INITIALIZER ------------------
+        window.addEventListener('DOMContentLoaded', async () => {
+            setupCountdownClocks();
+            updateTodayDateLabel();
+            
+            // Check Profile state
+            await checkProfileStatus();
+
+            // Set default highlighted mood button
+            selectJournalMood(selectedJournalMood);
+
+            // Seed quotes harian
+            cycleQuote();
+
+            // Load all database entries
+            if (!onboardingRequired) {
+                await reloadAllDashboardData();
+            }
+
+            // Inisialisasi local storage state untuk background Pomodoro Timer
+            initPomodoroFromLocalStorage();
+        });
+
+        function updateTodayDateLabel() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('today-date-el').innerText = new Date().toLocaleDateString('id-ID', options);
+        }
+
+        async function reloadAllDashboardData() {
+            await fetchProfileWidget();
+            await fetchTargets();
+            await fetchStreak();
+            await fetchForest();
+            await fetchReflectionAI();
+            await fetchMaterialsCurriculum();
+            await fetchJournals();
+            await fetchSessionsHistory();
+            await fetchAndRenderStats();
+        }
+
+        // Countdown Calculations
+        function setupCountdownClocks() {
+            function update() {
+                const now = new Date().getTime();
+                
+                const snbtDiff = SNBT_TARGET_DATE - now;
+                const snbtDays = snbtDiff > 0 ? Math.floor(snbtDiff / (1000 * 60 * 60 * 24)) : 0;
+                document.getElementById('snbt-countdown-el').innerText = `${snbtDays} Hari lagi`;
+
+                const tkaDiff = TKA_TARGET_DATE - now;
+                const tkaDays = tkaDiff > 0 ? Math.floor(tkaDiff / (1000 * 60 * 60 * 24)) : 0;
+                document.getElementById('tka-countdown-el').innerText = `${tkaDays} Hari lagi`;
+            }
+            update();
+            setInterval(update, 60000); // Update every minute
+        }
+
+        // Onboarding checks
+        async function checkProfileStatus() {
+            try {
+                const response = await fetch('/api/profile');
+                const profile = await response.json();
+                if (!profile.onboarded) {
+                    onboardingRequired = true;
+                    document.getElementById('onboarding-overlay').classList.remove('hidden');
+                } else {
+                    onboardingRequired = false;
+                    document.getElementById('onboarding-overlay').classList.add('hidden');
+                }
+            } catch (err) {
+                console.error("Gagal mengecek profil", err);
+            }
+        }
+
+        async function submitOnboarding(event) {
+            event.preventDefault();
+            const nickname = document.getElementById('onboard-nickname').value;
+            const campus = document.getElementById('onboard-campus').value;
+            const major = document.getElementById('onboard-major').value;
+            const focus = document.querySelector('input[name="onboard-focus"]:checked').value;
+            const weak = document.getElementById('onboard-weak').value;
+            const strong = document.getElementById('onboard-strong').value;
+            const hours = document.getElementById('onboard-hours').value;
+
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nickname,
+                        target_campus: campus,
+                        target_major: major,
+                        exam_focus: focus,
+                        weakest_subject: weak,
+                        strongest_subject: strong,
+                        target_study_hours: hours
+                    })
+                });
+                if (response.ok) {
+                    document.getElementById('onboarding-overlay').classList.add('hidden');
+                    onboardingRequired = false;
+                    await reloadAllDashboardData();
+                }
+            } catch (err) {
+                console.error("Onboarding gagal", err);
+            }
+        }
+
+        async function resetProfileOnboard() {
+            if (!confirm("Apakah Anda ingin mereset profil onboarding dan mengulangi form target kampus?")) return;
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nickname: '', target_campus: '', target_major: '', exam_focus: 'Both', weakest_subject: '', strongest_subject: '', target_study_hours: 2.0, onboarded: 0 })
+                });
+                // Clean DB and restart onboarding
+                window.location.reload();
+            } catch (err) {
+                console.error("Reset onboarding gagal", err);
+            }
+        }
+
+        async function fetchProfileWidget() {
+            try {
+                const response = await fetch('/api/profile');
+                const profile = await response.json();
+                if (profile.onboarded) {
+                    document.getElementById('profile-widget-name').innerText = profile.nickname;
+                    document.getElementById('profile-widget-campus').innerText = profile.target_campus;
+                }
+            } catch (err) {
+                console.error("Gagal mengambil widget profile", err);
+            }
+        }
+
+        // Switch Tabs SPA
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            // Set active menu button styling
+            document.querySelectorAll('.menu-btn').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('bg-brand-purple-50', 'text-brand-purple-600');
+                    btn.classList.remove('text-slate-500', 'hover:bg-slate-50');
+                } else {
+                    btn.classList.remove('bg-brand-purple-50', 'text-brand-purple-600');
+                    btn.classList.add('text-slate-500', 'hover:bg-slate-50');
+                }
+            });
+        }
+
+        // Quotes harian
+        const MOTIVATIONAL_QUOTES = [
+            { text: "Kerja keras mengalahkan bakat ketika bakat tidak bekerja keras.", author: "Tim Notke" },
+            { text: "Jalan terbaik untuk memprediksi masa depanmu adalah dengan menciptakannya sendiri.", author: "Abraham Lincoln" },
+            { text: "Ujian SNBT bukanlah tes IQ, melainkan tes konsistensi dan kesiapan mentalmu.", author: "Bimbel Coach" },
+            { text: "Setiap kegagalan di tryout adalah petunjuk gratis materi apa yang harus kamu kuasai selanjutnya.", author: "Evaluasi AI" },
+            { text: "Burnout terjadi ketika kamu lupa mengapa kamu memulainya. Ambil istirahat, lalu bangkit lagi.", author: "Mental Guide" }
+        ];
+        function cycleQuote() {
+            const randomQuote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+            document.getElementById('quote-text').innerText = `"${randomQuote.text}"`;
+            document.getElementById('quote-author').innerText = `— ${randomQuote.author}`;
+        }
+
+        // ------------------ TARGETS MODULE ------------------
+        let dailyTargets = [];
+        async function fetchTargets() {
+            try {
+                const response = await fetch('/api/targets');
+                dailyTargets = await response.json();
+                renderTargets();
+            } catch (err) {
+                console.error("Gagal memuat target harian", err);
+            }
+        }
+
+        function renderTargets() {
+            const container = document.getElementById('quick-targets-container');
+            const total = dailyTargets.length;
+            const completed = dailyTargets.filter(t => t.is_completed).length;
+            
+            document.getElementById('target-stat-widget').innerText = `${completed}/${total} selesai`;
+
+            if (total === 0) {
+                container.innerHTML = `<div class="text-center py-4 text-xs text-slate-400 font-semibold">Tidak ada target harian hari ini. Buat satu di atas!</div>`;
+                return;
+            }
+
+            container.innerHTML = dailyTargets.map(t => `
+                <div class="flex items-center justify-between p-3 rounded-2xl border ${t.is_completed ? 'bg-slate-50/70 border-slate-100' : 'bg-white border-brand-purple-100'} hover:shadow-sm transition">
+                    <div class="flex items-center space-x-2">
+                        <button onclick="toggleTarget(${t.id}, ${t.is_completed})" class="w-5 h-5 rounded-full border flex items-center justify-center transition ${t.is_completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-brand-purple-400 bg-white'}">
+                            ${t.is_completed ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                        </button>
+                        <span class="text-xs font-semibold ${t.is_completed ? 'line-through text-slate-400' : 'text-slate-700'}">${t.title}</span>
+                    </div>
+                    <button onclick="deleteTarget(${t.id})" class="text-slate-300 hover:text-rose-500 p-1 rounded-lg transition">
+                        <i class="fa-regular fa-trash-can text-xs"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function handleQuickTarget(event) {
+            event.preventDefault();
+            const input = document.getElementById('quick-target-title');
+            try {
+                const response = await fetch('/api/targets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: input.value })
+                });
+                if (response.ok) {
+                    input.value = '';
+                    await fetchTargets();
+                    await fetchStreak();
+                    await fetchReflectionAI();
+                }
+            } catch (err) {
+                console.error("Gagal menyimpan target", err);
+            }
+        }
+
+        async function toggleTarget(id, current) {
+            try {
+                const response = await fetch(`/api/targets/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_completed: !current })
+                });
+                if (response.ok) {
+                    await fetchTargets();
+                    await fetchStreak();
+                    await fetchReflectionAI();
+                }
+            } catch (err) {
+                console.error("Gagal mengupdate target", err);
+            }
+        }
+
+        async function deleteTarget(id) {
+            try {
+                const response = await fetch(`/api/targets/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    await fetchTargets();
+                    await fetchStreak();
+                    await fetchReflectionAI();
+                }
+            } catch (err) {
+                console.error("Gagal menghapus target", err);
+            }
+        }
+
+        // ------------------ STREAK & PLANT GROW MODULE ------------------
+        async function fetchStreak() {
+            try {
+                const response = await fetch('/api/streak');
+                const streak = await response.json();
+                
+                document.getElementById('streak-days-widget').innerText = `${streak.current_streak} Hari`;
+                document.getElementById('streak-stage-widget').innerText = `Tahap: ${streak.stage}`;
+                document.getElementById('streak-longest-widget').innerText = `${streak.longest_streak} Hari`;
+                document.getElementById('streak-plant-emoji').innerText = streak.emoji;
+            } catch (err) {
+                console.error("Gagal mengambil streak", err);
+            }
+        }
+
+        // ------------------ AMBIS FOREST MODULE ------------------
+        let allTrees = [];
+        async function fetchForest() {
+            try {
+                const response = await fetch('/api/forest');
+                allTrees = await response.json();
+                renderForest();
+            } catch (err) {
+                console.error("Gagal memuat hutan belajar", err);
+            }
+        }
+
+        function renderForest() {
+            const previewGrid = document.getElementById('forest-preview-grid');
+            const fullGrid = document.getElementById('forest-full-grid');
+
+            // Render mini dashboard preview (up to 4 items)
+            const previewHtml = allTrees.slice(0, 4).map(tree => `
+                <div class="flex flex-col items-center p-2 rounded-xl bg-slate-50 border border-slate-100 hover:scale-105 transition" title="${tree.name} (${tree.streak_length} Hari)">
+                    <span class="text-3xl">🌳</span>
+                    <span class="text-[9px] font-bold text-slate-500 mt-1 max-w-[50px] truncate">${tree.name}</span>
+                </div>
+            `).join('');
+            previewGrid.innerHTML = previewHtml || `<div class="col-span-4 text-[10px] text-slate-400 font-semibold py-4">Belum ada pohon. Capai 30 hari streak belajar!</div>`;
+
+            // Render full Hutan Belajar
+            if (allTrees.length === 0) {
+                fullGrid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-semibold text-sm">Hutan belajarmu masih kosong. Yuk belajar konsisten agar bibitmu tumbuh menjadi pohon besar!</div>`;
+                return;
+            }
+
+            fullGrid.innerHTML = allTrees.map(tree => `
+                <div class="bg-emerald-50/50 p-5 rounded-3xl border border-emerald-100 shadow-sm flex flex-col items-center text-center space-y-2 relative group hover:shadow-md transition">
+                    <span class="text-5xl">🌳</span>
+                    <h4 class="font-extrabold text-sm text-slate-800">${tree.name}</h4>
+                    <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md">${tree.streak_length} Hari Streak</span>
+                    
+                    <div class="text-[10px] font-semibold text-slate-500 space-y-1 w-full text-left pt-2 border-t border-emerald-100/50">
+                        <div class="flex justify-between">
+                            <span>Mulai:</span>
+                            <span class="font-bold text-slate-700">${tree.started_date}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Total Belajar:</span>
+                            <span class="font-bold text-slate-700">${(tree.total_study_seconds / 3600).toFixed(1)} Jam</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Fokus Mapel:</span>
+                            <span class="font-bold text-slate-700 truncate max-w-[80px]">${tree.top_subject}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openSimulationModal() {
+            document.getElementById('simulation-modal').classList.remove('hidden');
+        }
+        function closeSimulationModal() {
+            document.getElementById('simulation-modal').classList.add('hidden');
+        }
+
+        async function submitPlantSimulation() {
+            const name = document.getElementById('sim-tree-name').value;
+            const streak = document.getElementById('sim-tree-streak').value;
+            const subject = document.getElementById('sim-tree-subject').value;
+            
+            try {
+                const response = await fetch('/api/forest/plant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, duration: streak, top_subject: subject })
+                });
+                if (response.ok) {
+                    closeSimulationModal();
+                    await fetchForest();
+                    await fetchAndRenderStats();
+                }
+            } catch (err) {
+                console.error("Gagal melakukan simulasi tanam pohon", err);
+            }
+        }
+
+        // ------------------ REFLECTION AI MODULE ------------------
+        async function fetchReflectionAI() {
+            const box = document.getElementById('ai-reflection-box');
+            box.innerHTML = `<div class="flex items-center space-x-2 text-brand-purple-500 font-bold"><i class="fa-solid fa-spinner animate-spin"></i><span>AI sedang mengevaluasi catatan dan progres belajarmu hari ini...</span></div>`;
+            try {
+                const response = await fetch('/api/reflection');
+                const data = await response.json();
+                box.innerHTML = data.reflection;
+            } catch (err) {
+                box.innerText = "Gagal memuat evaluasi AI.";
+                console.error("AI Reflection load error", err);
+            }
+        }
+
+        // ------------------ CURRICULUM SYLLABUS MODULE ------------------
+        let activeCurricFilter = 'SNBT';
+        async function fetchMaterialsCurriculum() {
+            try {
+                const response = await fetch('/api/materials');
+                allMaterials = await response.json();
+                renderCurriculum();
+                populateSubjectDropdown();
+            } catch (err) {
+                console.error("Gagal memuat silabus", err);
+            }
+        }
+
+        function filterCurriculum(category) {
+            activeCurricFilter = category;
+            ['SNBT', 'TKA'].forEach(tab => {
+                const btn = document.getElementById(`curric-tab-${tab}`);
+                if (tab === category) {
+                    btn.className = "border-b-2 border-brand-purple-500 text-brand-purple-600 px-4 py-2 transition";
+                } else {
+                    btn.className = "border-b-2 border-transparent text-slate-400 hover:text-slate-600 px-4 py-2 transition";
+                }
+            });
+            renderCurriculum();
+        }
+
+        function renderCurriculum() {
+            const container = document.getElementById('curriculum-container');
+            const filtered = allMaterials.filter(m => m.category === activeCurricFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-slate-400 font-semibold text-sm">Tidak ada materi belajar untuk kurikulum ini.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map((sub, sIdx) => {
+                // Calculate subject overall progress
+                let totalSubtopics = 0;
+                let masteredSubtopics = 0;
+                
+                sub.topics.forEach(top => {
+                    top.subtopics.forEach(subt => {
+                        totalSubtopics++;
+                        if (subt.status === 'Sudah Menguasai') masteredSubtopics++;
+                    });
+                });
+                const percent = totalSubtopics > 0 ? Math.round((masteredSubtopics / totalSubtopics) * 100) : 0;
+
+                return `
+                    <div class="border border-brand-purple-100 rounded-3xl bg-white overflow-hidden shadow-sm">
+                        <!-- Subject Accordion Title Header -->
+                        <div onclick="toggleSubjectAccordion(${sIdx})" class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50/40 transition">
+                            <div class="space-y-1">
+                                <h4 class="font-extrabold text-sm text-slate-800">${sub.name}</h4>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-24 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                        <div class="bg-brand-purple-500 h-full" style="width: ${percent}%"></div>
+                                    </div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${percent}% Menguasai</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200" id="accordion-arrow-${sIdx}"></i>
+                        </div>
+
+                        <!-- Topics Content inside Subject Accordion -->
+                        <div class="border-t border-brand-purple-50/50 bg-slate-50/30 p-4 space-y-4 hidden" id="accordion-content-${sIdx}">
+                            ${sub.topics.map(topic => `
+                                <div class="space-y-2">
+                                    <h5 class="font-bold text-xs text-slate-500 uppercase tracking-wider">${topic.name}</h5>
+                                    <div class="space-y-2 bg-white rounded-2xl p-3 border border-slate-100">
+                                        ${topic.subtopics.map(subt => {
+                                            let badgeStyle = 'bg-slate-100 text-slate-500';
+                                            if (subt.status === 'Sedang Belajar') badgeStyle = 'bg-amber-100 text-amber-600';
+                                            else if (subt.status === 'Sudah Menguasai') badgeStyle = 'bg-emerald-100 text-emerald-600';
+
+                                            return `
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 gap-2">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span class="text-xs font-semibold text-slate-700">${subt.name}</span>
+                                                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${badgeStyle}" id="subt-status-badge-${subt.id}">${subt.status}</span>
+                                                    </div>
+                                                    
+                                                    <!-- Status radio buttons picker -->
+                                                    <div class="flex items-center space-x-1">
+                                                        <button onclick="updateSubtopicStatus(${subt.id}, 'Belum Belajar')" class="px-2.5 py-1 text-[9px] font-bold rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition ${subt.status === 'Belum Belajar' ? 'ring-1 ring-slate-400 bg-slate-50' : ''}">Belum</button>
+                                                        <button onclick="updateSubtopicStatus(${subt.id}, 'Sedang Belajar')" class="px-2.5 py-1 text-[9px] font-bold rounded-lg border border-amber-200 bg-white hover:bg-amber-50 text-amber-600 transition ${subt.status === 'Sedang Belajar' ? 'ring-1 ring-amber-500 bg-amber-50/50' : ''}">Sedang</button>
+                                                        <button onclick="updateSubtopicStatus(${subt.id}, 'Sudah Menguasai')" class="px-2.5 py-1 text-[9px] font-bold rounded-lg border border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-600 transition ${subt.status === 'Sudah Menguasai' ? 'ring-1 ring-emerald-500 bg-emerald-50/50' : ''}">Kuasai</button>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleSubjectAccordion(idx) {
+            const content = document.getElementById(`accordion-content-${idx}`);
+            const arrow = document.getElementById(`accordion-arrow-${idx}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+
+        async function updateSubtopicStatus(subtId, newStatus) {
+            try {
+                const response = await fetch('/api/materials/progress', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subtopic_id: subtId, status: newStatus })
+                });
+                if (response.ok) {
+                    await fetchMaterialsCurriculum();
+                    await fetchAndRenderStats();
+                    await fetchReflectionAI();
+                }
+            } catch (err) {
+                console.error("Gagal mengupdate progres", err);
+            }
+        }
+
+        function populateSubjectDropdown() {
+            const dropdown = document.getElementById('timer-subject-select');
+            // Extract unique subjects
+            dropdown.innerHTML = allMaterials.map(s => `
+                <option value="${s.id}">${s.name} (${s.category})</option>
+            `).join('');
+        }
+
+        // ------------------ STUDY TIMER MODULE (POMODORO) ------------------
+        let timerInterval = null;
+        let timerSecondsLeft = 25 * 60;
+        let timerTotalSecondsSelected = 25 * 60;
+        let timerIsRunning = false;
+        let timerLabel = 'Belajar 25 Menit';
+        
+        function initPomodoroFromLocalStorage() {
+            // Load if timer states was saved previously
+            const savedTime = localStorage.getItem('pomodoro_seconds_left');
+            const savedTotal = localStorage.getItem('pomodoro_total_seconds');
+            const savedLabel = localStorage.getItem('pomodoro_label');
+            const savedRunning = localStorage.getItem('pomodoro_is_running');
+            const savedEndTime = localStorage.getItem('pomodoro_end_time');
+
+            if (savedTime) timerSecondsLeft = parseInt(savedTime);
+            if (savedTotal) timerTotalSecondsSelected = parseInt(savedTotal);
+            if (savedLabel) timerLabel = savedLabel;
+
+            // If it was running, calculate time drift since the page closed/refreshed
+            if (savedRunning === 'true' && savedEndTime) {
+                const diffSec = Math.floor((parseInt(savedEndTime) - new Date().getTime()) / 1000);
+                if (diffSec > 0) {
+                    timerSecondsLeft = diffSec;
+                    timerIsRunning = true;
+                    startTimerTicker();
+                } else {
+                    // Timer finished in background
+                    timerSecondsLeft = 0;
+                    handleTimerComplete();
+                }
+            }
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSecondsLeft / 60);
+            const seconds = timerSecondsLeft % 60;
+            document.getElementById('timer-display').innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update circular progress svg dashoffset
+            // Circumference of radius 120 is 2 * Math.PI * 120 = 754
+            const progress = timerSecondsLeft / timerTotalSecondsSelected;
+            const dashoffset = progress * 754;
+            document.getElementById('timer-progress-ring').setAttribute('stroke-dashoffset', 754 - dashoffset);
+        }
+
+        function toggleTimer() {
+            if (timerIsRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            if (timerSecondsLeft <= 0) return;
+            timerIsRunning = true;
+            localStorage.setItem('pomodoro_is_running', 'true');
+            // Calculate absolute end time for background persist calculations on refresh
+            const endTime = new Date().getTime() + (timerSecondsLeft * 1000);
+            localStorage.setItem('pomodoro_end_time', endTime.toString());
+
+            startTimerTicker();
+            document.getElementById('timer-play-btn').innerHTML = '<i class="fa-solid fa-pause"></i>';
+        }
+
+        function startTimerTicker() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timerSecondsLeft > 0) {
+                    timerSecondsLeft--;
+                    localStorage.setItem('pomodoro_seconds_left', timerSecondsLeft.toString());
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerIsRunning = false;
+                    localStorage.removeItem('pomodoro_is_running');
+                    handleTimerComplete();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            timerIsRunning = false;
+            localStorage.setItem('pomodoro_is_running', 'false');
+            localStorage.removeItem('pomodoro_end_time');
+            clearInterval(timerInterval);
+            document.getElementById('timer-play-btn').innerHTML = '<i class="fa-solid fa-play"></i>';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSecondsLeft = timerTotalSecondsSelected;
+            localStorage.setItem('pomodoro_seconds_left', timerSecondsLeft.toString());
+            updateTimerDisplay();
+        }
+
+        function setTimerPreset(minutes, breakMins, label) {
+            pauseTimer();
+            timerTotalSecondsSelected = minutes * 60;
+            timerSecondsLeft = timerTotalSecondsSelected;
+            timerLabel = label;
+            
+            localStorage.setItem('pomodoro_total_seconds', timerTotalSecondsSelected.toString());
+            localStorage.setItem('pomodoro_seconds_left', timerSecondsLeft.toString());
+            localStorage.setItem('pomodoro_label', timerLabel);
+            
+            updateTimerDisplay();
+            alert(`Preset diatur: ${minutes} Menit belajar. Klik tombol Play untuk memulai!`);
+        }
+
+        function setCustomTimer() {
+            const minInput = document.getElementById('custom-minutes').value;
+            const minutes = parseInt(minInput);
+            if (isNaN(minutes) || minutes < 1 || minutes > 180) {
+                alert("Masukkan durasi menit yang valid (1 - 180).");
+                return;
+            }
+            pauseTimer();
+            timerTotalSecondsSelected = minutes * 60;
+            timerSecondsLeft = timerTotalSecondsSelected;
+            timerLabel = `Belajar Kustom ${minutes}m`;
+            
+            localStorage.setItem('pomodoro_total_seconds', timerTotalSecondsSelected.toString());
+            localStorage.setItem('pomodoro_seconds_left', timerSecondsLeft.toString());
+            localStorage.setItem('pomodoro_label', timerLabel);
+            
+            updateTimerDisplay();
+        }
+
+        // Complete Study Session API logging
+        async function handleTimerComplete() {
+            updateTimerDisplay();
+            playBeepSound();
+            alert("⏰ Sesi belajar selesai! Bagus sekali. Waktunya istirahat sejenak.");
+
+            // Log session to backend if it was a study session (not a short break)
+            const subjectId = document.getElementById('timer-subject-select').value;
+            if (subjectId && timerLabel.includes("Belajar")) {
+                try {
+                    await fetch('/api/study-sessions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            subject_id: parseInt(subjectId),
+                            duration_seconds: timerTotalSecondsSelected
+                        })
+                    });
+                    await fetchSessionsHistory();
+                    await fetchStreak();
+                    await fetchAndRenderStats();
+                    await fetchReflectionAI();
+                } catch (err) {
+                    console.error("Gagal menyimpan sesi belajar ke database", err);
+                }
+            }
+            resetTimer();
+        }
+
+        // Web Audio API Beep Alarm sound synthesizer (Works fully offline!)
+        function playBeepSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Sound beep 1
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+
+                // Sound beep 2
+                setTimeout(() => {
+                    let osc2 = audioCtx.createOscillator();
+                    let gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(880, audioCtx.currentTime);
+                    gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    osc2.start();
+                    osc2.stop(audioCtx.currentTime + 0.15);
+                }, 200);
+
+            } catch (e) {
+                console.warn("Web Audio API not supported or user gesture needed", e);
+            }
+        }
+
+        function soundTest() {
+            playBeepSound();
+        }
+
+        async function fetchSessionsHistory() {
+            try {
+                const response = await fetch('/api/study-sessions');
+                const sessions = await response.json();
+                const container = document.getElementById('session-history-container');
+                
+                if (sessions.length === 0) {
+                    container.innerHTML = `<div class="text-slate-400 font-semibold py-2">Belum ada sesi belajar hari ini.</div>`;
+                    return;
+                }
+
+                container.innerHTML = sessions.slice(0, 5).map(s => `
+                    <div class="flex justify-between items-center p-2 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="space-y-0.5">
+                            <span class="font-extrabold text-slate-700">${s.subject_name}</span>
+                            <div class="text-[9px] text-slate-400 font-bold uppercase">${s.created_at}</div>
+                        </div>
+                        <span class="font-extrabold text-brand-purple-600 bg-brand-purple-50 px-2 py-0.5 rounded-lg border border-brand-purple-100">${Math.round(s.duration_seconds / 60)} m</span>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error("Gagal memuat riwayat sesi belajar", err);
+            }
+        }
+
+
+        // ------------------ JOURNAL & MOOD MODULE ------------------
+        
+        function selectJournalMood(mood) {
+            selectedJournalMood = mood;
+            document.querySelectorAll('.j-mood-btn').forEach(btn => {
+                if (btn.getAttribute('data-mood') === mood) {
+                    btn.classList.add('border-brand-purple-500', 'bg-brand-purple-50', 'ring-2', 'ring-brand-purple-200');
+                    btn.classList.remove('border-slate-200', 'bg-white');
+                } else {
+                    btn.classList.remove('border-brand-purple-500', 'bg-brand-purple-50', 'ring-2', 'ring-brand-purple-200');
+                    btn.classList.add('border-slate-200', 'bg-white');
+                }
+            });
+        }
+
+        async function fetchJournals() {
+            try {
+                const response = await fetch('/api/journals');
+                const journals = await response.json();
+                renderJournals(journals);
+            } catch (err) {
+                console.error("Gagal mengambil jurnal", err);
+            }
+        }
+
+        function renderJournals(journals) {
+            const container = document.getElementById('full-journals-container');
+            if (journals.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs font-semibold">Belum ada riwayat jurnal belajar. Tulis jurnal pertamamu hari ini!</div>`;
+                return;
+            }
+
+            container.innerHTML = journals.map(j => {
+                let moodColor = '';
+                if (j.mood === 'Excited') moodColor = 'text-amber-500 bg-amber-50 border-amber-200';
+                else if (j.mood === 'Happy') moodColor = 'text-emerald-500 bg-emerald-50 border-emerald-200';
+                else if (j.mood === 'Focused') moodColor = 'text-blue-500 bg-blue-50 border-blue-200';
+                else if (j.mood === 'Tired') moodColor = 'text-violet-500 bg-violet-50 border-violet-200';
+                else if (j.mood === 'Stressed') moodColor = 'text-rose-500 bg-rose-50 border-rose-200';
+
+                return `
+                    <div class="p-4 rounded-2xl bg-white border border-slate-100 hover:shadow-sm transition text-left space-y-2 relative">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xl">${getMoodEmoji(j.mood)}</span>
+                                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${moodColor}">${j.mood}</span>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-400">${j.created_at}</span>
+                        </div>
+                        <div class="text-xs space-y-1.5 pt-1">
+                            <div><strong class="text-slate-500">Materi dipelajari:</strong> <span class="text-slate-700 font-medium">${j.learned_today}</span></div>
+                            <div><strong class="text-slate-500">Kesulitan:</strong> <span class="text-slate-700 font-medium">${j.difficulties}</span></div>
+                            <div><strong class="text-slate-500">Rencana esok:</strong> <span class="text-slate-700 font-medium">${j.tomorrow_plan}</span></div>
+                            <div class="pt-1 text-slate-600 italic font-medium">"${j.content}"</div>
+                        </div>
+                        <button onclick="deleteJournal(${j.id})" class="absolute top-2 right-2 text-slate-300 hover:text-rose-500 p-1 hover:bg-rose-50 rounded-lg transition" title="Hapus jurnal">
+                            <i class="fa-regular fa-trash-can text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function submitFullJournal(event) {
+            event.preventDefault();
+            const content = document.getElementById('journal-content');
+            const learned = document.getElementById('journal-learned');
+            const diff = document.getElementById('journal-diff');
+            const tomorrow = document.getElementById('journal-tomorrow');
+
+            try {
+                const response = await fetch('/api/journals', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: content.value,
+                        learned_today: learned.value,
+                        difficulties: diff.value,
+                        tomorrow_plan: tomorrow.value,
+                        mood: selectedJournalMood
+                    })
+                });
+                if (response.ok) {
+                    content.value = '';
+                    learned.value = '';
+                    diff.value = '';
+                    tomorrow.value = '';
+                    await fetchJournals();
+                    await fetchStreak();
+                    await fetchAndRenderStats();
+                    await fetchReflectionAI();
+                    alert("Jurnal harian berhasil disimpan. Streak belajarmu bertambah!");
+                }
+            } catch (err) {
+                console.error("Gagal menyimpan jurnal harian", err);
+            }
+        }
+
+        async function deleteJournal(id) {
+            if (!confirm("Hapus catatan jurnal ini?")) return;
+            try {
+                const response = await fetch(`/api/journals/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    await fetchJournals();
+                    await fetchAndRenderStats();
+                    await fetchReflectionAI();
+                }
+            } catch (err) {
+                console.error("Gagal menghapus jurnal", err);
+            }
+        }
+
+        // ------------------ STATISTICS & CHARTS MODULE ------------------
+        let chartActivityInstance = null;
+        let chartSubjectsInstance = null;
+        let chartMoodsInstance = null;
+
+        async function fetchAndRenderStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+
+                // Set values cards
+                document.getElementById('stats-total-hours').innerText = `${stats.total_study_hours} Jam`;
+                document.getElementById('stats-most-studied').innerText = stats.most_studied_subject;
+                
+                // Dashboard small widget percentage updates
+                document.getElementById('snbt-percent-widget').innerText = `${stats.snbt_completion_percentage}%`;
+                document.getElementById('snbt-bar-widget').style.width = `${stats.snbt_completion_percentage}%`;
+                document.getElementById('tka-percent-widget').innerText = `${stats.tka_completion_percentage}%`;
+                document.getElementById('tka-bar-widget').style.width = `${stats.tka_completion_percentage}%`;
+
+                // 1. Render Activity line chart
+                renderActivityChart(stats.daily_activity);
+
+                // 2. Render Subjects progress bar chart
+                renderSubjectsChart(stats.subject_progress);
+
+                // 3. Render Moods distribution doughnut chart
+                renderMoodsChart(stats.mood_distribution);
+
+            } catch (err) {
+                console.error("Gagal memproses statistik & grafik", err);
+            }
+        }
+
+        function renderActivityChart(data) {
+            const ctx = document.getElementById('chart-activity').getContext('2d');
+            if (chartActivityInstance) chartActivityInstance.destroy();
+            
+            chartActivityInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.day),
+                    datasets: [{
+                        label: 'Waktu Belajar (Jam)',
+                        data: data.map(d => d.hours),
+                        borderColor: '#a371ff',
+                        backgroundColor: 'rgba(163, 113, 255, 0.15)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderSubjectsChart(data) {
+            const ctx = document.getElementById('chart-subjects').getContext('2d');
+            if (chartSubjectsInstance) chartSubjectsInstance.destroy();
+
+            chartSubjectsInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.subject),
+                    datasets: [{
+                        data: data.map(d => d.percentage),
+                        backgroundColor: '#6c8eff',
+                        borderRadius: 8,
+                        maxBarThickness: 30
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderMoodsChart(data) {
+            const ctx = document.getElementById('chart-moods').getContext('2d');
+            if (chartMoodsInstance) chartMoodsInstance.destroy();
+
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            chartMoodsInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#f43f5e']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+    </script>
+</body>
+</html>
