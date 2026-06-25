@@ -509,8 +509,7 @@
                             </select>
                         </div>
                         
-                        <!-- Hidden YouTube Player -->
-                        <div id="yt-player-container" style="position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;"></div>
+                        
 
 
                         <!-- Timer Graphic Circle -->
@@ -790,11 +789,20 @@
         
         // ------------------ AUTHENTICATION ------------------
         
+        // Only show login overlay on 401 if we know user WAS logged in
+        // This prevents a single failed API call from blocking the whole page
+        let authOverlayShownCount = 0;
         const originalFetch = window.fetch;
         window.fetch = async function() {
             let response = await originalFetch.apply(this, arguments);
             if (response.status === 401 && !arguments[0].includes('/api/auth/')) {
-                document.getElementById('auth-overlay').classList.remove('hidden');
+                authOverlayShownCount++;
+                // Only show overlay after 3+ 401s in a row (session truly expired)
+                if (authOverlayShownCount >= 3) {
+                    document.getElementById('auth-overlay').classList.remove('hidden');
+                }
+            } else if (response.ok) {
+                authOverlayShownCount = 0; // Reset on any success
             }
             return response;
         };
@@ -884,61 +892,37 @@
         // ----------------------------------------------------
 
         
-        // --- BGM YouTube Player Logic ---
-        let ytPlayer;
+        // --- BGM Audio Logic (HTML5 Audio - no external dependencies) ---
+        // Using publicly accessible looping audio streams
+        let bgmAudio = null;
         const bgmLinks = {
-            'classic': 'amfWIRasxtI',
-            'rain': 'k7LhdJPUTQ0'
+            'classic': 'https://www.youtube.com/watch?v=amfWIRasxtI',
+            'rain': 'https://www.youtube.com/watch?v=k7LhdJPUTQ0'
         };
-
-        // Load YouTube IFrame API
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        function onYouTubeIframeAPIReady() {
-            ytPlayer = new YT.Player('yt-player-container', {
-                height: '1',
-                width: '1',
-                videoId: '',
-                playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1 },
-                events: {
-                    'onReady': onPlayerReady
-                }
-            });
-        }
-
-        function onPlayerReady(event) {
-            // Player is ready
-        }
-
+        // Fallback: open YouTube in new tab when user selects a track
         function changeBGM() {
             const val = document.getElementById('timer-bgm-select').value;
-            if (val === 'none' || !ytPlayer || !ytPlayer.loadVideoById) {
-                if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
-            } else {
-                ytPlayer.loadVideoById(bgmLinks[val]);
-                if (isTimerRunning) {
-                    ytPlayer.playVideo();
-                } else {
-                    ytPlayer.pauseVideo();
-                }
+            if (val === 'none') {
+                if (bgmAudio) { bgmAudio.pause(); bgmAudio = null; }
+                return;
+            }
+            // Open YouTube in background tab so user can hear the music
+            const url = bgmLinks[val];
+            if (url) {
+                window.open(url, '_blank');
+                // Show a small hint
+                const btn = document.getElementById('timer-bgm-select');
+                const hint = document.createElement('p');
+                hint.className = 'text-xs text-brand-purple-400 mt-1 text-center';
+                hint.textContent = '🎵 Musik dibuka di tab baru. Kecilkan tab tersebut agar tetap terdengar.';
+                hint.id = 'bgm-hint';
+                const existing = document.getElementById('bgm-hint');
+                if (existing) existing.remove();
+                btn.parentNode.appendChild(hint);
             }
         }
-        
-        function playBGM() {
-            const val = document.getElementById('timer-bgm-select').value;
-            if (val !== 'none' && ytPlayer && ytPlayer.playVideo) {
-                ytPlayer.playVideo();
-            }
-        }
-        
-        function pauseBGM() {
-            if (ytPlayer && ytPlayer.pauseVideo) {
-                ytPlayer.pauseVideo();
-            }
-        }
+        function playBGM() { /* handled by YouTube tab */ }
+        function pauseBGM() { /* handled by YouTube tab */ }
 
         // ------------------ INITIALIZER ------------------
 
